@@ -69,3 +69,39 @@ export function getCardValue(rank) {
   }
   return values[rank] || 0
 }
+
+export function wait(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms))
+}
+
+export function calculateRoundResult(userCard, computerCard){
+  if (!userCard || !computerCard) {
+    return { winner: 'tie', message: 'Error: no cards!' }
+  }
+
+  const userValue = getCardValue(userCard.rank)
+  const computerValue = getCardValue(computerCard.rank)
+
+  if (userValue > computerValue) {
+    return { winner: 'user', message: 'You won the round.' }
+  }
+  else if (computerValue > userValue) {
+    return { winner: 'computer', message: 'Computer won the round.' }
+  }
+  else {
+    return { winner: 'tie', message: 'Tie!' }
+  }
+}
+
+export function dealCard(deck) {
+  if (!deck || deck.length === 0) {
+    return { card: null, remainingDeck: [] }
+  }
+
+  const [card, ...remainingDeck] = deck
+
+  return {
+    card: { ...card, isFlipped: true },
+    remainingDeck
+  }
+}

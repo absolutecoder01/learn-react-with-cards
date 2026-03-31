@@ -8,19 +8,13 @@ export function Card({ card, onCardClick, isAppearing = false }) {
 
   const imageSrc = getCardImageSrc(card);
 
-  const handleClick = () => {
-    if (typeof onCardClick === 'function') {
-      onCardClick(card.id);
-    }
-  };
-
   return (
     <div className="card-container">
       <img
         src={imageSrc}
-        alt={`Karta ${card.rank} ${card.suit}`}
+        alt={`Card ${card.rank} ${card.suit}`}
         className={`card ${isAppearing ? 'appearing' : ''} ${!card.isFlipped ? 'back' : 'front'}`}
-        onClick={handleClick}
+        onClick={() => onCardClick?.(card.id)}
         onError={(e) => {
           console.error('Failed to load card image:', imageSrc);
           e.target.src = '/cards/BLUE_BACK.svg';
