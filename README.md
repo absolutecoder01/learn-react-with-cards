@@ -1,16 +1,42 @@
-# React + Vite
+# Card Game War 🃏
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A classic card game War built with React featuring a modern interface inspired by a poker table. The game offers smooth animations, classic design with green felt and wooden accents, and intuitive gameplay mechanics.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- Full War game mechanics - random deck shuffling, card value comparison, automatic point allocation to round winner
+- Classic poker table look with green felt and wooden frame
+- Card counter for each player's deck
+- Round result and game over messages
+- Reset button available at the end of gameplay
 
-## React Compiler
+## Tech Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+<div>
+  <img src="https://img.shields.io/badge/-React-61DAFB?style=for-the-badge&logo=react&logoColor=white" />
+  <img src="https://img.shields.io/badge/-JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black" />
+  <img src="https://img.shields.io/badge/-CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white" />
+  <img src="https://img.shields.io/badge/-Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white" />
+  <img src="https://img.shields.io/badge/-HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white" />
+  <img src="https://img.shields.io/badge/-NPM-CB3837?style=for-the-badge&logo=npm&logoColor=white" />
+  <img src="https://img.shields.io/badge/-Git-F05032?style=for-the-badge&logo=git&logoColor=white" />
+  <img src="https://img.shields.io/badge/-GitHub-181717?style=for-the-badge&logo=github&logoColor=white" />
+</div>
 
-## Expanding the ESLint configuration
+## Installation
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+1. Clone the repository: `git clone <url>`
+2. Navigate to project folder: `cd project-name`
+3. Install dependencies: `npm install`
+4. Run dev server: `npm run dev`
+5. Open browser: `http://localhost:5173` or `http://localhost:3000`
+
+## How to Play
+
+1. Click on your deck to draw a card
+2. Computer automatically draws its card
+3. Higher value card wins (2-10, J=11, Q=12, K=13, A=14)
+4. Round winner takes both cards to their deck
+5. On tie, cards return to owners
+6. Game ends when one player has no cards left
+7. Click "New Game" to restart

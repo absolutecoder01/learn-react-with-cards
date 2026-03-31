@@ -1,20 +1,9 @@
+import './Card.css'
 import { getCardImageSrc } from "../../utils/cardHelpers";
 
-export function Card({ card, onCardClick }) {
+export function Card({ card, onCardClick, isAppearing = false }) {
   if (!card) {
-    return (
-      <div style={{
-        width: '100px',
-        height: '140px',
-        border: '2px dashed red',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: '#ffe6e6'
-      }}>
-        NO CARD (null)
-      </div>
-    );
+    return <div className="card-placeholder"></div>;
   }
 
   const imageSrc = getCardImageSrc(card);
@@ -26,32 +15,15 @@ export function Card({ card, onCardClick }) {
   };
 
   return (
-    <div style={{ width: '100px', height: '140px' }}>
+    <div className="card-container">
       <img
         src={imageSrc}
         alt={`Karta ${card.rank} ${card.suit}`}
-        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+        className={`card ${isAppearing ? 'appearing' : ''} ${!card.isFlipped ? 'back' : 'front'}`}
         onClick={handleClick}
         onError={(e) => {
-          e.target.style.display = 'none';
-          e.target.parentNode.innerHTML = `
-            <div style="
-              width: 100%;
-              height: 100%;
-              border: 2px solid orange;
-              background: #fff3cd;
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              font-size: 12px;
-              text-align: center;
-            ">
-              BŁĄD ŁADOWANIA<br/>
-              Rank: ${card.rank}<br/>
-              Suit: ${card.suit}<br/>
-              Src: ${imageSrc}
-            </div>
-          `;
+          console.error('Failed to load card image:', imageSrc);
+          e.target.src = '/cards/BLUE_BACK.svg';
         }}
       />
     </div>

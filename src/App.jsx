@@ -1,124 +1,178 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Card } from './components/Card/Card'
+import { Deck } from './components/Deck/Deck'
+import { Scoreboard } from './components/Scoreboard/Scoreboard'
+import { GameMessage } from './components/GameMessage/GameMessage'
+import { createDeck, shuffleDeck, getCardValue } from './utils/cardHelpers'
+import { dealCard } from './utils/dealCards'
+
 function App() {
-  const [userCard, setUserCard] = useState(null);
-  const [userDeck, setUserDeck] = useState(null);
-  const [userPoints, setUserPoints] = useState(0);
-  const [computerCard, setComputerCard] = useState(null);
-  const [computerDeck, setComputerDeck] = useState(null);
-  const [computerPoints, setComputerPoints] = useState(0);
-  const [result, setResult] = useState(null);
+  const [userDeck, setUserDeck] = useState([])
+  const [computerDeck, setComputerDeck] = useState([])
+  const [userCard, setUserCard] = useState(null)
+  const [computerCard, setComputerCard] = useState(null)
+  const [result, setResult] = useState(null)
+  const [isAnimating, setIsAnimating] = useState(false)
+  const [gameOver, setGameOver] = useState(false)
+  const [gameInitialized, setGameInitialized] = useState(false)
+  const [isUserDrawing, setIsUserDrawing] = useState(false)
+  const [isComputerDrawing, setIsComputerDrawing] = useState(false)
 
-  function createDeck() {
-    const suits = ['hearts', 'diamonds', 'clubs', 'spades'];
-    const ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
-    const deck = [];
+  const initGame = () => {
+    const deck = shuffleDeck(createDeck())
+    const midPoint = Math.floor(deck.length / 2)
 
-    for (let suit of suits) {
-      for (let rank of ranks) {
-        deck.push({
-          id: `${rank}-${suit}`,
-          suit: suit,
-          rank: rank,
-          isFlipped: true,
-          isMatched: false
-        });
-      }
+    setUserDeck(deck.slice(0, midPoint))
+    setComputerDeck(deck.slice(midPoint))
+    setUserCard(null)
+    setComputerCard(null)
+    setResult(null)
+    setGameOver(false)
+    setGameInitialized(true)
+  }
+
+  useEffect(() => {
+    if (!gameInitialized) {
+      initGame()
+    }
+  }, [])
+
+  const calculateRoundResult = (userCard, computerCard) => {
+    if (!userCard || !computerCard) {
+      return { winner: 'tie', message: 'Error: no cards!' }
     }
 
-    return deck;
-  }
-  function getRandomCard(deck) {
-    return deck[Math.floor(Math.random() * deck.length)];
-  }
-
-  function getCardValue(rank) {
-    const values = {
-      '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9, '10': 10,
-      'J': 11, 'Q': 12, 'K': 13, 'A': 14
-    };
-    return values[rank] || 0;
-  }
-
-  function calculateRoundResult(userCard, computerCard, currentScores) {
-    const userValue = getCardValue(userCard.rank);
-    const computerValue = getCardValue(computerCard.rank);
-
-    let newUserPoints = currentScores.user;
-    let newComputerPoints = currentScores.computer;
-    let message = '';
+    const userValue = getCardValue(userCard.rank)
+    const computerValue = getCardValue(computerCard.rank)
 
     if (userValue > computerValue) {
-      newUserPoints += 1;
-      message = 'Wygrałeś tę rundę!';
-    } else if (computerValue > userValue) {
-      newComputerPoints += 1;
-      message = 'Komputer wygrał tę rundę.';
-    } else {
-      message = 'Remis!';
+      return { winner: 'user', message: 'You won the round.' }
     }
-
-    return {
-      userPoints: newUserPoints,
-      computerPoints: newComputerPoints,
-      message: message
-    };
+    else if (computerValue > userValue) {
+      return { winner: 'computer', message: 'Computer won the round.' }
+    }
+    else {
+      return { winner: 'tie', message: 'Tie!' }
+    }
   }
 
-  const handleCardClick = (id) => {
-    console.log('Kliknięto kartę o ID:', id)
+  const handleUserDraw = () => {
+    if (isAnimating || gameOver || userDeck.length === 0 || userCard) { return }
+    setIsAnimating(true)
+    setIsUserDrawing(true)
+
+    const { card: newUserCard, remainingDeck: newUserDeck } = dealCard(userDeck)
+    setUserCard(newUserCard)
+    setUserDeck(newUserDeck)
+
+    setTimeout(() => {
+      setIsUserDrawing(false)
+      setIsComputerDrawing(true)
+
+      const { card: newComputerCard, remainingDeck: newComputerDeck } = dealCard(computerDeck)
+      setComputerCard(newComputerCard)
+      setComputerDeck(newComputerDeck)
+
+      setTimeout(() => {
+        setIsComputerDrawing(false)
+
+        const roundResult = calculateRoundResult(newUserCard, newComputerCard)
+        setResult(roundResult.message)
+
+        setTimeout(() => {
+          let finalUserDeck = newUserDeck
+          let finalComputerDeck = newComputerDeck
+
+          if (roundResult.winner === 'user') {
+            finalUserDeck = [...newUserDeck, newUserCard, newComputerCard]
+          } else if (roundResult.winner === 'computer') {
+            finalComputerDeck = [...newComputerDeck, newUserCard, newComputerCard]
+          } else {
+            finalUserDeck = [...newUserDeck, newUserCard]
+            finalComputerDeck = [...newComputerDeck, newComputerCard]
+          }
+
+          setUserDeck(finalUserDeck)
+          setComputerDeck(finalComputerDeck)
+
+          if (finalUserDeck.length === 0 && finalComputerDeck.length > 0) {
+            setResult('Game over! Computer won.')
+            setGameOver(true)
+          } else if (finalComputerDeck.length === 0 && finalUserDeck.length > 0) {
+            setResult('Game over! You won.')
+            setGameOver(true)
+          } else if (finalUserDeck.length === 0 && finalComputerDeck.length === 0) {
+            setResult('Game over! Tie!')
+            setGameOver(true)
+          }
+
+          setUserCard(null)
+          setComputerCard(null)
+          setIsAnimating(false)
+        }, 1000)
+      }, 600)
+    }, 800)
   }
+  const handleReset = () => {
+     setGameOver(false)
+     setResult(null)
+     initGame()
+   }
 
-  function drawCards() {
-    const deck = createDeck();
-    const userCard = getRandomCard(deck);
-    const computerCard = getRandomCard(deck);
-    return { userCard, computerCard };
-  }
-
-  function beginRound() {
-    const cards = drawCards();
-    const scores = {
-        user: userPoints,
-        computer: computerPoints
-    };
-
-    setComputerCard(cards.computerCard);
-    setUserCard(cards.userCard);
-    const roundResult = calculateRoundResult(cards.userCard, cards.computerCard, scores)
-
-    setComputerPoints(roundResult.computerPoints);
-    setUserPoints(roundResult.userPoints);
-    setResult(roundResult.message);
-  }
   return (
-    <>
-      <section id="center">
-        <div className="hand hhand">
-          <Card
-            card={userCard}
-            onCardClick={handleCardClick}
+    <div className="game-container">
+      <div className="poker-table"></div>
+
+      <div className="top-bar">
+        <Scoreboard
+          userDeckLength={userDeck.length}
+          computerDeckLength={computerDeck.length}
+        />
+      </div>
+
+      <GameMessage
+        result={result}
+        gameOver={gameOver}
+        onReset={handleReset}
+      />
+
+      <section className="game-area">
+        <div className="player-area computer">
+          <h3>Computer</h3>
+          <Deck
+            cardsCount={computerDeck.length}
+            isClickable={false}
+            onClick={null}
           />
+          <div className="card-slot">
+            {computerCard && (
+              <Card
+                card={computerCard}
+                isAppearing={isComputerDrawing}
+              />
+            )}
+          </div>
         </div>
-        <div className="hand hhand">
-          <Card
-            card={computerCard}
-            onCardClick={handleCardClick}
+
+        <div className="player-area user">
+          <div className="card-slot">
+            {userCard && (
+              <Card
+                card={userCard}
+                isAppearing={isUserDrawing}
+              />
+            )}
+          </div>
+          <Deck
+            cardsCount={userDeck.length}
+            isClickable={!isAnimating && !gameOver && !userCard && userDeck.length > 0}
+            onClick={handleUserDraw}
           />
+          <h3>You</h3>
         </div>
-        <button
-          onClick={beginRound}
-        >
-          Begin
-        </button>
-        <div className="scoreboard">
-          <p>Twój wynik: {userPoints}</p>
-          <p>Wynik komputera: {computerPoints}</p>
-        </div>
-        <p className="result-message">{result}</p>
       </section>
-    </>
+    </div>
   )
 }
 
-export default App;
+export default App
