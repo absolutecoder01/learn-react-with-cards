@@ -398,3 +398,118 @@ body {
     font-size: 10px;
   }
 }
+
+/* Deck styles */
+.deck {
+  position: relative;
+  width: 120px;
+  height: 170px;
+  margin: 10px auto;
+}
+
+.deck-card {
+  width: 100%;
+  height: 100%;
+  background: url('/cards/BLUE_BACK.svg') center/contain no-repeat;
+  border-radius: 10px;
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  position: relative;
+  z-index: 3;
+  transition: transform 0.3s ease;
+  border: 2px solid #fff;
+}
+
+.deck-card-offset {
+  position: absolute;
+  top: -4px;
+  left: 4px;
+  width: 100%;
+  height: 100%;
+  background: url('/cards/BLUE_BACK.svg') center/contain no-repeat;
+  border-radius: 10px;
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  z-index: 2;
+  border: 2px solid #fff;
+}
+
+.deck-card-offset-2 {
+  position: absolute;
+  top: -8px;
+  left: 8px;
+  width: 100%;
+  height: 100%;
+  background: url('/cards/BLUE_BACK.svg') center/contain no-repeat;
+  border-radius: 10px;
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  z-index: 1;
+  border: 2px solid #fff;
+}
+
+.deck.clickable {
+  cursor: pointer;
+}
+
+.deck.clickable:hover .deck-card {
+  transform: translateY(-8px);
+  box-shadow:
+    0 12px 25px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.deck.clickable:hover .deck-card-offset {
+  transform: translate(2px, -6px);
+}
+
+.deck.clickable:hover .deck-card-offset-2 {
+  transform: translate(4px, -4px);
+}
+
+.deck.clickable:active {
+  transform: scale(0.98);
+}
+
+.deck-count {
+  position: absolute;
+  bottom: -35px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(180deg, #d4af37 0%, #b8941f 100%);
+  color: #1a1a1a;
+  padding: 6px 18px;
+  border-radius: 20px;
+  font-size: 15px;
+  font-weight: bold;
+  z-index: 4;
+  border: 2px solid #8b7355;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+  font-family: 'Georgia', serif;
+}
+
+.deck-empty {
+  width: 100%;
+  height: 100%;
+  border: 3px dashed rgba(212, 175, 55, 0.3);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(212, 175, 55, 0.5);
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+@media (max-width: 900px) {
+  .deck {
+    width: 100px;
+    height: 140px;
+  }
+}

@@ -115,7 +115,7 @@ function App() {
         </div>
         {gameInitialized && (
           <button className="new-game-button" onClick={handleReset}>
-            🔄 New Game
+            New Game
           </button>
         )}
       </div>
@@ -124,7 +124,7 @@ function App() {
         {result && <p className="message-text">{gameOver ? 'Game Over!' : result}</p>}
         {gameOver && (
           <button className="reset-button" onClick={handleReset}>
-            🔄 New Game
+            New Game
           </button>
         )}
       </div>
